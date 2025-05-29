@@ -1,74 +1,56 @@
-// ============================
-// IMPORTATION DES MODULES EXPRESS et MIDDLEWARE CORS
-// ============================
+import express from 'express'
+import cors from 'cors'
 
-// Importation du module Express.
-// Express est un framework minimaliste pour créer des applications web côté serveur avec Node.js.
-import express from 'express';
+const app = express()
+const PORT = 3003
 
-// Importation du middleware 'cors'.
-// CORS (Cross-Origin Resource Sharing) permet à des applications front-end (comme React)
-// d'accéder aux ressources d'un serveur situé sur un domaine/port différent.
-import cors from 'cors';
+// Middlewares
+app.use(cors({
+  origin: ['http://localhost:5173'],
+  credentials: true
+}))
 
-import bodyParser from 'body-parser';
+app.use(express.json())
 
+// Middleware de logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`)
+  next()
+})
 
+// Routes API
+app.get('/api/posts', async (req, res) => {
+  console.log('🚀 Récupération des posts depuis JSONPlaceholder...')
+  
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts')
+    
+    if (!response.ok) {
+      throw new Error(`Erreur JSONPlaceholder: ${response.status}`)
+    }
+    
+    const posts = await response.json()
+    console.log(`✅ ${posts.length} posts récupérés`)
+    
+    res.json(posts)
+  } catch (error) {
+    console.error('❌ Erreur:', error.message)
+    res.status(500).json({ 
+      error: 'Impossible de récupérer les posts',
+      details: error.message 
+    })
+  }
+})
 
-// ============================
-// INITIALISATION DU SERVEUR
-// ============================
+// Route de test
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Backend connecté !' })
+})
 
-// Création d'une instance de l'application Express.
-// C'est à travers cette instance qu'on va configurer les routes, middlewares, etc.
-const app = express();
-
-// Définition du port sur lequel le serveur écoutera les requêtes HTTP.
-// Port 3001 est utilisé ici pour éviter le conflit avec React (qui utilise souvent 3000).
-const PORT = 3001;
-
-
-
-
-
-// ============================
-// MIDDLEWARES GLOBAUX
-// ============================
-
-// Active le middleware CORS pour toutes les routes de l'application.
-// Cela permet à ton application front-end (ex: React) d'accéder au backend sans blocage.
-app.use(cors());
-
-// Active le middleware qui permet à Express de lire automatiquement
-// les corps de requêtes en JSON (ex: les données envoyées via POST).
-app.use(express.json());
-
-app.use(bodyParser.json());
-
-
-
-// ============================
-// DÉFINITION D'UNE ROUTE GET
-// ============================
-
-// On crée une route accessible via l'URL "/api/message" avec la méthode HTTP GET.
-// req : représente la requête envoyée par le client
-// res : représente la réponse qu'on envoie au client
-app.get('/api/message', (req, res) => {
-  // On envoie une réponse JSON contenant un message texte
-  res.json({ message: 'Hello depuis le backend Express!' });
-});
-
-
-
-
-
-// ============================
-// DÉMARRAGE DU SERVEUR
-// ============================
-
-// On démarre le serveur en lui disant d'écouter sur le port 3001.
-// Une fois le serveur démarré, on affiche un message dans la console.
+// Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`Serveur backend lancé sur http://localhost:${PORT}`);
-});
+  console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`)
+  console.log(`📋 Routes disponibles:`)
+  console.log(`   GET /api/posts - Récupère les posts`)
+  console.log(`   GET /api/test  - Test de connexion`)
+})
