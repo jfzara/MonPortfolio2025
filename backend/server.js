@@ -11,7 +11,7 @@ import express from 'express';
 // d'accéder aux ressources d'un serveur situé sur un domaine/port différent.
 import cors from 'cors';
 
-
+import bodyParser from 'body-parser';
 
 
 
@@ -43,7 +43,7 @@ app.use(cors());
 // les corps de requêtes en JSON (ex: les données envoyées via POST).
 app.use(express.json());
 
-
+app.use(bodyParser.json());
 
 
 
