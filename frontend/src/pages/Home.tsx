@@ -1,100 +1,158 @@
-import React, { useState, useEffect } from 'react'
+// pages/Home.js
+import { Link } from 'react-router-dom';
+import './Home.css';
 
-interface Post {
-  id: number
-  title: string
-  body: string
-  userId: number
-}
-
-const Home: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchPosts()
-  }, [])
-
-  const fetchPosts = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      console.log('Tentative de connexion à /api/posts...')
-      
-      // Appel à votre API backend
-      const response = await fetch('/api/posts')
-      
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status} - Vérifiez que le backend est démarré`)
-      }
-      
-      const data = await response.json()
-      console.log('Données reçues:', data.length, 'posts')
-      
-      // Limiter à 10 posts pour l'affichage
-      setPosts(data.slice(0, 10))
-    } catch (err) {
-      console.error('Erreur lors de la récupération des posts:', err)
-      setError(err instanceof Error ? err.message : 'Impossible de se connecter au backend')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="container">
-        <h1>Portfolio Clone 2025</h1>
-        <div className="loading">Chargement des posts...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="container">
-        <h1>Portfolio Clone 2025</h1>
-        <div className="error">
-          <p>Erreur: {error}</p>
-          <p>Backend URL: http://localhost:5000</p>
-          <button onClick={fetchPosts} className="retry-btn">
-            Réessayer
-          </button>
-        </div>
-      </div>
-    )
-  }
-
+const Home = () => {
   return (
-    <div className="container">
-      <header className="header">
-        <h1>Portfolio Clone 2025</h1>
-        <p>Page d'accueil avec données de JSONPlaceholder</p>
-      </header>
+    <div className="home-container">
+      {/* Hero Section */}
+      <section className="hero">
+        <div className="hero-content">
+          <div className="hero-text">
+            <h1>
+              Salut, je suis <span className="highlight">Alex Dupont</span>
+            </h1>
+            <h2 className="hero-subtitle">Développeur Web Junior passionné</h2>
+            <p className="hero-description">
+              Je crée des applications web modernes et intuitives avec React, Node.js et les dernières technologies. 
+              Toujours en quête d'apprentissage et de nouveaux défis !
+            </p>
+            <div className="hero-buttons">
+              <Link to="/projects" className="btn btn-primary">
+                Voir mes projets
+              </Link>
+              <Link to="/contact" className="btn btn-secondary">
+                Me contacter
+              </Link>
+            </div>
+          </div>
+          <div className="hero-image">
+            <div className="profile-card">
+              <img src="/api/placeholder/250/250" alt="Alex Dupont" className="profile-img" />
+              <div className="status-indicator">
+                <span className="status-dot"></span>
+                Disponible pour un poste
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <main className="main">
-        <section className="posts-section">
-          <h2>Articles récents ({posts.length})</h2>
-          
-          <div className="posts-grid">
-            {posts.map((post) => (
-              <article key={post.id} className="post-card">
-                <h3>#{post.id} - {post.title}</h3>
-                <p>{post.body}</p>
-                <small>Par utilisateur #{post.userId}</small>
-              </article>
-            ))}
+      {/* Quick Stats */}
+      <section className="stats">
+        <div className="stats-grid">
+          <div className="stat-item">
+            <h3>12+</h3>
+            <p>Projets réalisés</p>
+          </div>
+          <div className="stat-item">
+            <h3>8</h3>
+            <p>Technologies maîtrisées</p>
+          </div>
+          <div className="stat-item">
+            <h3>2</h3>
+            <p>Années d'apprentissage</p>
+          </div>
+          <div className="stat-item">
+            <h3>100%</h3>
+            <p>Motivation</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Technologies */}
+      <section className="technologies">
+        <div className="section-header">
+          <h2>Technologies que j'utilise</h2>
+          <p>Mes outils de prédilection pour créer des applications performantes</p>
+        </div>
+        
+        <div className="tech-grid">
+          <div className="tech-category">
+            <h3>Frontend</h3>
+            <div className="tech-items">
+              <span className="tech-item">React</span>
+              <span className="tech-item">JavaScript</span>
+              <span className="tech-item">HTML5</span>
+              <span className="tech-item">CSS3</span>
+              <span className="tech-item">TailwindCSS</span>
+            </div>
           </div>
           
-          <button onClick={fetchPosts} className="refresh-btn">
-            Actualiser les données
-          </button>
-        </section>
-      </main>
-    </div>
-  )
-}
+          <div className="tech-category">
+            <h3>Backend</h3>
+            <div className="tech-items">
+              <span className="tech-item">Node.js</span>
+              <span className="tech-item">Express</span>
+              <span className="tech-item">MongoDB</span>
+              <span className="tech-item">PostgreSQL</span>
+              <span className="tech-item">API REST</span>
+            </div>
+          </div>
+          
+          <div className="tech-category">
+            <h3>Outils</h3>
+            <div className="tech-items">
+              <span className="tech-item">Git</span>
+              <span className="tech-item">VS Code</span>
+              <span className="tech-item">Figma</span>
+              <span className="tech-item">Postman</span>
+              <span className="tech-item">Vercel</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-export default Home
+      {/* Recent Projects Preview */}
+      <section className="recent-projects">
+        <div className="section-header">
+          <h2>Projets récents</h2>
+          <Link to="/projects" className="see-all-link">Voir tous les projets →</Link>
+        </div>
+        
+        <div className="projects-preview">
+          <div className="project-preview-card">
+            <img src="/api/placeholder/300/200" alt="E-commerce React" />
+            <div className="preview-content">
+              <h4>E-commerce React</h4>
+              <p>Application complète avec panier et paiement</p>
+              <div className="preview-tech">
+                <span>React</span>
+                <span>Node.js</span>
+                <span>Stripe</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="project-preview-card">
+            <img src="/api/placeholder/300/200" alt="Dashboard Analytics" />
+            <div className="preview-content">
+              <h4>Dashboard Analytics</h4>
+              <p>Interface de visualisation de données</p>
+              <div className="preview-tech">
+                <span>React</span>
+                <span>Chart.js</span>
+                <span>API</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="project-preview-card">
+            <img src="/api/placeholder/300/200" alt="API Blog" />
+            <div className="preview-content">
+              <h4>API RESTful Blog</h4>
+              <p>Backend complet avec authentification</p>
+              <div className="preview-tech">
+                <span>Node.js</span>
+                <span>PostgreSQL</span>
+                <span>JWT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default Home;
